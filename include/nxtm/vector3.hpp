@@ -1,128 +1,89 @@
 #pragma once
 
 // #include <cstddef>
+#include "nxtm_utils.hpp"
 
 namespace nxtm
 {
-
-      template <typename T>
-      inline bool CheckZero(const T value)
+  template <typename T>
+  class Vector3
+  {
+  public:
+    //===============Data**
+    union
+    {
+      T data[3];
+      struct
       {
-            if (value == T{0})
-                  return true;
-            return false;
-      }
-
-      template <typename T>
-      class Vector3
-      {
-      public:
-            //===============Data**
-            union
-            {
-                  T data[3];
-                  struct
-                  {
-                        T x, y, z;
-                  };
-            };
-            //===============Data//
-
-            //=====================================================Constructors**
-            explicit Vector3(T x, T y, T z) : x(x), y(y), z(z) {};
-            Vector3() : x(T{}), y(T{}), z(T{}) {};
-            //=====================================================Constructors//
-
-            //=====================================================Operator Overloads**
-            Vector3<T> &operator-=(const Vector3<T> rhs) noexcept
-            {
-                  this->x -= rhs.x;
-                  this->y -= rhs.y;
-                  this->z -= rhs.z;
-
-                  return *this;
-            }
-
-            Vector3<T> &operator+=(const Vector3<T> rhs) noexcept
-            {
-                  this->x += rhs.x;
-                  this->y += rhs.y;
-                  this->z += rhs.z;
-
-                  return *this;
-            }
-
-            Vector3<T> &operator*=(const Vector3<T> rhs) noexcept
-            {
-                  this->x *= rhs.x;
-                  this->y *= rhs.y;
-                  this->z *= rhs.z;
-
-                  return *this;
-            }
-
-            Vector3<T> &operator/=(const Vector3<T> rhs) noexcept
-            {
-                  //assert(CheckZero(rhs.x) && CheckZero(rhs.y) && CheckZero(rhs.z) && "Division by zero!");
-
-                  if (CheckZero(rhs.x) || CheckZero(rhs.y) || CheckZero(rhs.z))
-                        return *this;
-
-                  this->x /= rhs.x;
-                  this->y /= rhs.y;
-                  this->z /= rhs.z;
-
-                  return *this;
-            }
-
-            Vector3<T> operator-(const Vector3<T> &rhs) const noexcept
-            {
-                  Vector3<T> result = *this;
-
-                  result -= rhs;
-
-                  return result;
-            }
-
-            Vector3<T> operator+(const Vector3<T> &rhs) const noexcept
-            {
-                  Vector3<T> result = *this;
-
-                  result += rhs;
-
-                  return result;
-            }
-
-            Vector3<T> operator*(const Vector3<T> &rhs) const noexcept
-            {
-                  Vector3<T> result = *this;
-
-                  result *= rhs;
-
-                  return result;
-            }
-
-            Vector3<T> operator/(const Vector3<T> &rhs) const noexcept
-            {
-                  Vector3<T> result = *this;
-
-                  result /= rhs;
-
-                  return result;
-            }
-
-            friend std::ostream &operator<<(std::ostream &os, const Vector3 &vec)
-            {
-                  os << "Vector3(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
-                  return os;
-            }
-
-            //=======================================================Operator Overloads//
+        T x, y, z;
       };
+    };
+    //===============Data//
 
-      // #include vector3_impl.inl
+    //=====================================================Constructors**
+    explicit Vector3(T x, T y, T z) : x(x), y(y), z(z) {};
+    Vector3() : x(T{}), y(T{}), z(T{}) {};
+    //=====================================================Constructors//
 
-      using Vector3f = Vector3<float>;
-      using vector3d = Vector3<double>;
-      using Vector3i = Vector3<int>;
+    //=====================================================Vector Functions**
+    T dot(const Vector3<T>& rhs) const noexcept;
+    T length() const noexcept;
+    T length_square() const noexcept;
+    Vector3<T> cross(const Vector3<T>& rhs) const noexcept; // todo
+    Vector3<T> normalized() const noexcept; // todo
+    //=====================================================Vector Functions//
+
+
+    //=====================================================Operator Overloads**
+    Vector3<T> &operator+=(const Vector3<T>& rhs) noexcept;
+    Vector3<T> &operator+=(const T scalar) noexcept;
+
+    Vector3<T> &operator-=(const Vector3<T>& rhs) noexcept;
+    Vector3<T> &operator-=(const T scalar) noexcept;
+
+    Vector3<T> &operator*=(const Vector3<T>& rhs) noexcept;
+    Vector3<T> &operator*=(const T scalar) noexcept;
+
+    Vector3<T> &operator/=(const Vector3<T>& rhs) noexcept;
+    Vector3<T> &operator/=(const T scalar) noexcept;
+
+    Vector3<T> operator+(const Vector3<T> &rhs) const noexcept;
+    Vector3<T> operator+(const T scalar) const noexcept;
+
+    template <typename U>
+    friend Vector3<U> operator+(const U scalar, const Vector3<U>& rhs);
+
+    Vector3<T> operator-(const Vector3<T> &rhs) const noexcept;
+    Vector3<T> operator-(const T scalar) const noexcept;
+
+    template <typename U>
+    friend Vector3<U> operator-(const U scalar, const Vector3<U>& rhs);
+
+    Vector3<T> operator*(const Vector3<T> &rhs) const noexcept;
+    Vector3<T> operator*(const T scalar) const noexcept;
+
+    template <typename U>
+    friend Vector3<U> operator*(const U scalar, const Vector3<U>& rhs);
+
+    Vector3<T> operator/(const Vector3<T> &rhs) const noexcept;
+    Vector3<T> operator/(const T scalar) const noexcept;
+
+    template <typename U>
+    friend Vector3<U> operator/(const U scalar, const Vector3<U>& rhs);
+
+    friend std::ostream &operator<<(std::ostream &os, const Vector3 &vec)
+    {
+      os << "Vector3(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+      return os;
+    }
+
+    //=======================================================Operator Overloads//
+  };
+
+  
+
+  using Vector3f = Vector3<float>;
+  using vector3d = Vector3<double>;
+  using Vector3i = Vector3<int>;
 }
+#include "details/vector3_impl.inl"
